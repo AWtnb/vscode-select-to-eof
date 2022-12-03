@@ -2,6 +2,11 @@
   "name": "select-to-eof",
   "displayName": "select-to-eof",
   "description": "select current word to end-of-file",
+  "icon": "images/logo.png",
+  "repository": {
+    "url": "https://github.com/AWtnb/vscode-select-to-eof"
+  },
+  "publisher": "awtnb",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.73.0"
