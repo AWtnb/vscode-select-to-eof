@@ -1,14 +1,11 @@
 import * as vscode from "vscode";
 
 const scanLine = (line: string, search: string, stack: number[] = []): number[] => {
-  if (search.length < 1 || line.length < 1) {
-    return stack;
-  }
-  if (line.indexOf(search) < 0) {
+  if (search.length < 1 || line.length < 1 || line.indexOf(search) < 0) {
     return stack;
   }
   const lastIdx = stack.length ? stack.slice(-1)[0] + search.length : 0;
-  stack.push(line.indexOf(search) + lastIdx);
+  stack.push(lastIdx + line.indexOf(search));
   const rest = line.substring(line.indexOf(search) + search.length);
   return scanLine(rest, search, stack);
 };
