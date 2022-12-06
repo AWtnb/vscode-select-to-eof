@@ -32,19 +32,38 @@ const scanToEOF = (editor: vscode.TextEditor, current: vscode.Selection): vscode
   return sels;
 };
 
-export function activate(context: vscode.ExtensionContext) {
-  let disposable = vscode.commands.registerCommand("select-to-eof.apply", () => {
-    const editor = vscode.window.activeTextEditor;
-    if (editor) {
-      const current = editor.selection;
-      if (current.isEmpty) {
-        return;
-      }
-      editor.selections = scanToEOF(editor, current);
-    }
+const scrollToNextSelection = () => {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || editor.selections.length < 2) {
+    return;
+  }
+  const visible = editor.visibleRanges[0];
+  const unseenSelections = editor.selections.filter((sel) => {
+    return visible.end.line < sel.start.line;
   });
+  const targetLine = unseenSelections.length < 1 ? editor.selections[0].start.line : unseenSelections[0].start.line;
+  vscode.commands.executeCommand("revealLine", {
+    lineNumber: targetLine,
+    at: "center",
+  });
+};
 
-  context.subscriptions.push(disposable);
+export function activate(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.commands.registerCommand("select-to-eof.seed", () => {
+      const editor = vscode.window.activeTextEditor;
+      if (editor) {
+        const current = editor.selection;
+        if (current.isEmpty) {
+          return;
+        }
+        editor.selections = scanToEOF(editor, current);
+      }
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("select-to-eof.scroll", scrollToNextSelection)
+  );
 }
 
 export function deactivate() {}

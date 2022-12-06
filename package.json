@@ -15,14 +15,19 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:select-to-eof.apply"
+    "onCommand:select-to-eof.seed",
+    "onCommand:select-to-eof.toNextSelection"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "select-to-eof.apply",
-        "title": "select current word to end-of-file"
+        "command": "select-to-eof.seed",
+        "title": "select-to-eof: seed"
+      },
+      {
+        "command": "select-to-eof.scroll",
+        "title": "select-to-eof: scroll"
       }
     ]
   },
