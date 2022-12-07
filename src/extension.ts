@@ -32,9 +32,8 @@ const scanToEOF = (editor: vscode.TextEditor, current: vscode.Selection): vscode
   return sels;
 };
 
-const scrollToNextSelection = () => {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor || editor.selections.length < 2) {
+const scrollToNextSelection = (editor: vscode.TextEditor) => {
+  if (editor.selections.length < 2) {
     return;
   }
   const visible = editor.visibleRanges[0];
@@ -50,19 +49,18 @@ const scrollToNextSelection = () => {
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("select-to-eof.seed", () => {
-      const editor = vscode.window.activeTextEditor;
-      if (editor) {
-        const current = editor.selection;
-        if (current.isEmpty) {
-          return;
-        }
-        editor.selections = scanToEOF(editor, current);
+    vscode.commands.registerTextEditorCommand("select-to-eof.seed", (editor: vscode.TextEditor) => {
+      const current = editor.selection;
+      if (current.isEmpty) {
+        return;
       }
+      editor.selections = scanToEOF(editor, current);
     })
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("select-to-eof.scroll", scrollToNextSelection)
+    vscode.commands.registerTextEditorCommand("select-to-eof.scroll", (editor: vscode.TextEditor) => {
+      scrollToNextSelection(editor);
+    })
   );
 }
 
