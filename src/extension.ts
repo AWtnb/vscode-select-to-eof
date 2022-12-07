@@ -43,7 +43,7 @@ const scrollToNextSelection = (editor: vscode.TextEditor) => {
   const targetLine = unseenSelections.length < 1 ? editor.selections[0].start.line : unseenSelections[0].start.line;
   vscode.commands.executeCommand("revealLine", {
     lineNumber: targetLine,
-    at: "center",
+    at: "top",
   });
 };
 
