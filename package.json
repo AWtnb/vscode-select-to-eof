@@ -16,7 +16,7 @@
   ],
   "activationEvents": [
     "onCommand:select-to-eof.seed",
-    "onCommand:select-to-eof.toNextSelection"
+    "onCommand:select-to-eof.scroll"
   ],
   "main": "./out/extension.js",
   "contributes": {
