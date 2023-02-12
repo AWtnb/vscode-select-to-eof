@@ -9,4 +9,6 @@
 
 ### `select-to-eof.toNextSelection` scrolls between the current cursors.
 
+If you need only this feature, you can use [awtnb.peek-cursor](https://marketplace.visualstudio.com/items?itemName=awtnb.peek-cursor).
+
 **Enjoy!**
