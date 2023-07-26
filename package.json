@@ -26,11 +26,13 @@
     "commands": [
       {
         "command": "select-to-eof.seed",
-        "title": "select-to-eof: seed"
+        "title": "seed",
+        "category": "select-to-eof"
       },
       {
         "command": "select-to-eof.scroll",
-        "title": "select-to-eof: scroll"
+        "title": "scroll",
+        "category": "select-to-eof"
       }
     ]
   },
