@@ -1,65 +1,62 @@
 import * as vscode from "vscode";
 
 const scanLine = (line: string, search: string, stack: number[] = []): number[] => {
-  if (search.length < 1 || line.length < 1 || line.indexOf(search) < 0) {
+  const idx = line.indexOf(search);
+  if (search.length < 1 || line.length < 1 || idx < 0) {
     return stack;
   }
   const lastIdx = stack.length ? stack.slice(-1)[0] + search.length : 0;
-  stack.push(lastIdx + line.indexOf(search));
-  const rest = line.substring(line.indexOf(search) + search.length);
+  stack.push(lastIdx + idx);
+  const rest = line.substring(idx + search.length);
   return scanLine(rest, search, stack);
 };
 
-const scanToEOF = (editor: vscode.TextEditor, current: vscode.Selection): vscode.Selection[] => {
+const scanToEOF = (editor: vscode.TextEditor, base: vscode.Selection): vscode.Selection[] => {
   const sels: vscode.Selection[] = [];
-  const search = editor.document.getText(current);
-  for (let i = current.start.line; i < editor.document.lineCount; i++) {
+  const search = editor.document.getText(base);
+  for (let i = base.start.line; i < editor.document.lineCount; i++) {
     const line = editor.document.lineAt(i);
-    const rangeStartIndices = scanLine(line.text, search, []);
-    if (rangeStartIndices.length) {
-      rangeStartIndices
-        .filter((startIdx) => {
-          if (i == current.start.line) return current.start.character <= startIdx;
-          return true;
-        })
-        .forEach((startIdx) => {
-          const startPos = new vscode.Position(i, startIdx);
-          const endPos = new vscode.Position(i, startIdx + search.length);
-          sels.push(new vscode.Selection(startPos, endPos));
-        });
+    const offsets = scanLine(line.text, search, []);
+    if (offsets.length < 1) {
+      continue;
     }
+    offsets
+      .filter((offset) => {
+        if (i == base.start.line) {
+          return base.start.character <= offset;
+        }
+        return true;
+      })
+      .forEach((offset) => {
+        const s = new vscode.Selection(i, offset, i, offset + search.length);
+        sels.push(s);
+      });
   }
   return sels;
 };
 
-const scrollToNextSelection = (editor: vscode.TextEditor) => {
-  if (editor.selections.length < 2) {
-    return;
-  }
-  const visible = editor.visibleRanges[0];
-  const unseenSelections = editor.selections.filter((sel) => {
-    return visible.end.line < sel.start.line;
-  });
-  const targetLine = unseenSelections.length < 1 ? editor.selections[0].start.line : unseenSelections[0].start.line;
-  vscode.commands.executeCommand("revealLine", {
-    lineNumber: targetLine,
-    at: "top",
+
+const sortSels = (sels: vscode.Selection[]): vscode.Selection[] => {
+  return sels.sort((a, b) => {
+    if (a.start < b.start) return -1;
+    if (b.start < a.start) return 1;
+    return 0;
   });
 };
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerTextEditorCommand("select-to-eof.seed", (editor: vscode.TextEditor) => {
-      const current = editor.selection;
-      if (current.isEmpty) {
+      if (editor.selections.length < 2) {
+        editor.selections = scanToEOF(editor, editor.selection);
         return;
       }
-      editor.selections = scanToEOF(editor, current);
-    })
-  );
-  context.subscriptions.push(
-    vscode.commands.registerTextEditorCommand("select-to-eof.scroll", (editor: vscode.TextEditor) => {
-      scrollToNextSelection(editor);
+      const sels = sortSels(editor.selections.slice());
+      const base = sels.slice(-1)[0];
+      if (base.isEmpty) {
+        return;
+      }
+      editor.selections = scanToEOF(editor, base);
     })
   );
 }

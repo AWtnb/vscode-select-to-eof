@@ -18,8 +18,7 @@
     "Multi-cursor"
   ],
   "activationEvents": [
-    "onCommand:select-to-eof.seed",
-    "onCommand:select-to-eof.scroll"
+    "onCommand:select-to-eof.seed"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -27,11 +26,6 @@
       {
         "command": "select-to-eof.seed",
         "title": "seed",
-        "category": "select-to-eof"
-      },
-      {
-        "command": "select-to-eof.scroll",
-        "title": "scroll",
         "category": "select-to-eof"
       }
     ]

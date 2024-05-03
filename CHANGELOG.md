@@ -1,9 +1,11 @@
 # Change Log
 
-All notable changes to the "select-to-eof" extension will be documented in this file.
+<!-- http://keepachangelog.com/ -->
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [0.4.0] - 2024-05-03
 
-## [Unreleased]
+### Removed
 
-- Initial release
+Removed `select-to-eof.toNextSelection` command (command for scrolling between the cursors) for simplicity.
+
+- Install [awtnb.peek-cursor](https://marketplace.visualstudio.com/items?itemName=awtnb.peek-cursor) to use this feature.
